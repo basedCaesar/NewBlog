@@ -122,6 +122,8 @@ $ php artisan serve
 <details>
 <summary>Rotas de autenticação</summary>
 
+
+
 ### POST "Registra um novo usuário"
 
 - **URL:** `api/auth/register`
@@ -143,12 +145,26 @@ $ php artisan serve
 		"updated_at": <"Data/hora da alteração">,
 		"created_at": <"Data/hora da criação">,
 		"id": <id>
-	}
-}
+	    }
+  }
   ```
 
+  ### POST "Realiza logout do usuário"
 
-### POST "Realiza login do usuário"
+- **URL:** `api/auth/logout`
+- **Método:** POST
+- **Descrição:** Realiza login do usuário.
+- **Parâmetros:**
+- **Headers:**
+ - `Authorization`: Bearer <Token>.
+- **Resposta:**
+  ```json
+  {
+	"message": "Logout realizado com sucesso"
+  }
+  ```
+  
+  ### POST "Realiza login do usuário"
 
 - **URL:** `api/auth/login`
 - **Método:** POST
@@ -170,21 +186,12 @@ $ php artisan serve
 }
   ```
 
-### POST "Realiza logout do usuário"
 
-- **URL:** `api/auth/logout`
-- **Método:** POST
-- **Descrição:** Realiza login do usuário.
-- **Parâmetros:**
-- **Headers:**
- - `Authorization`: Bearer <Token>.
-- **Resposta:**
-  ```json
-  {
-	"message": "Logout realizado com sucesso"
-  }
-  ```
 </details>
+
+<details>
+<summary>Rotas dos posts</summary>
+    
 ### GET "Recupera todos os posts do BDD"
 
 - **URL:** `api/posts`
@@ -224,8 +231,6 @@ $ php artisan serve
 }
 
 
-<details>
-<summary>Rotas dos posts</summary>
     
 ### GET "Recupera um post específico do BDD"
 
