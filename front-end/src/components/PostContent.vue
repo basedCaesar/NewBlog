@@ -27,7 +27,6 @@
 </template>
 
 <script setup>
-import { defineProps } from 'vue-router';
 
 // Definir as props recebidas pelo componente
 const props = defineProps({
