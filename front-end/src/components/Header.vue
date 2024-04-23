@@ -86,8 +86,7 @@ const logout = async () => {
 
 // Método para lidar com o registro
 const register = () => {
-  // Realizar lógica de registro aqui
-  // Por exemplo, coletar dados de entrada do usuário e enviar uma solicitação para o servidor
+
   showRegistrationModal.value = true;
 };
 

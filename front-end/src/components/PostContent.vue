@@ -26,13 +26,15 @@
   </div>
 </template>
 
-<script>
-export default {
-  props: {
-    post: Object, // Prop para receber os dados do post
-    user: Object, // Prop para receber os dados do usuário
-  },
-};
+<script setup>
+import { defineProps } from 'vue-router';
+
+// Definir as props recebidas pelo componente
+const props = defineProps({
+  post: Object, // Prop para receber os dados do post
+  user: Object, // Prop para receber os dados do usuário
+});
 </script>
+
 
 
