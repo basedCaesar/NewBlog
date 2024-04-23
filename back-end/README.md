@@ -189,100 +189,12 @@ $ php artisan serve
 
 </details>
 
+
+
 <details>
+
 <summary>Rotas dos posts</summary>
     
-### GET "Recupera todos os posts do BDD"
-
-- **URL:** `api/posts`
-- **Método:** GET
-- **Descrição:** Recupera todos os posts do BDD.
-- **Parâmetros:**
-- **Headers:**
-- **Resposta:**
-  ```json
-  {
-	[
-	{
-		"id": <Id do post>,
-		"title": <"Título do post">,
-		"content": <"Conteúdo do post">,
-		"user_id": <Id do usuário>,
-		"created_at": <"Data/hora da criação">,
-		"updated_at": <"Data/hora da alteração">
-	},
-	{
-		"id": <Id do post>,
-		"title": <"Título do post">,
-		"content": <"Conteúdo do post">,
-		"user_id": <Id do usuário>,
-		"created_at": <"Data/hora da criação">,
-		"updated_at": <"Data/hora da alteração">
-	},
-  {
-		"id": <Id do post>,
-		"title": <"Título do post">,
-		"content": <"Conteúdo do post">,
-		"user_id": <Id do usuário>,
-		"created_at": <"Data/hora da criação">,
-		"updated_at": <"Data/hora da alteração">
-	}
-]
-}
-
-
-    
-### GET "Recupera um post específico do BDD"
-
-- **URL:** `api/posts/{id}`
-- **Método:** GET
-- **Descrição:** Recupera um post específico do BDD.
-- **Parâmetros:**
-- **Headers:**
-- **Resposta:**
-  ```json
-  {
-
-	{
-		"id": <Id do post>,
-		"title": <"Título do post">,
-		"content": <"Conteúdo do post">,
-		"user_id": <Id do usuário>,
-		"created_at": <"Data/hora da criação">,
-		"updated_at": <"Data/hora da alteração">
-	}
-
-}
-
-### POST "Cria um novo post no BDD"
-
-- **URL:** `api/posts`
-- **Método:** POST
-- **Descrição:** Cria um novo post no BDD.
-- **Parâmetros:**
-  - `title`: Título do post. 
-  - `content`: Conteúdo do post.
-- **Headers:**
-   - `Authorization`: Bearer <Token>.
-- **Resposta:**
-  ```json
-  {
-			
-		
-		"title": <"Título do post">,
-		"content": <"Conteúdo do post">,
-		"user_id": <Id do usuário>,
-		"created_at": <"Data/hora da criação">,
-		"updated_at": <"Data/hora da alteração">
-        "id": <Id do post>
-
-  }
-  ```
-
-
-
-
-
 
    ### PUT "Altera um post específico no BDD"
 
@@ -376,6 +288,94 @@ $ php artisan serve
     }
 ]
 }
+```
+### GET "Recupera todos os posts do BDD"
+
+- **URL:** `api/posts`
+- **Método:** GET
+- **Descrição:** Recupera todos os posts do BDD.
+- **Parâmetros:**
+- **Headers:**
+- **Resposta:**
+  ```json
+  {
+	[
+	{
+		"id": <Id do post>,
+		"title": <"Título do post">,
+		"content": <"Conteúdo do post">,
+		"user_id": <Id do usuário>,
+		"created_at": <"Data/hora da criação">,
+		"updated_at": <"Data/hora da alteração">
+	},
+	{
+		"id": <Id do post>,
+		"title": <"Título do post">,
+		"content": <"Conteúdo do post">,
+		"user_id": <Id do usuário>,
+		"created_at": <"Data/hora da criação">,
+		"updated_at": <"Data/hora da alteração">
+	},
+  {
+		"id": <Id do post>,
+		"title": <"Título do post">,
+		"content": <"Conteúdo do post">,
+		"user_id": <Id do usuário>,
+		"created_at": <"Data/hora da criação">,
+		"updated_at": <"Data/hora da alteração">
+	}
+]
+}
+```
+
+    
+### GET "Recupera um post específico do BDD"
+
+- **URL:** `api/posts/{id}`
+- **Método:** GET
+- **Descrição:** Recupera um post específico do BDD.
+- **Parâmetros:**
+- **Headers:**
+- **Resposta:**
+  ```json
+  {
+
+	{
+		"id": <Id do post>,
+		"title": <"Título do post">,
+		"content": <"Conteúdo do post">,
+		"user_id": <Id do usuário>,
+		"created_at": <"Data/hora da criação">,
+		"updated_at": <"Data/hora da alteração">
+	}
+
+}
+```
+
+### POST "Cria um novo post no BDD"
+
+- **URL:** `api/posts`
+- **Método:** POST
+- **Descrição:** Cria um novo post no BDD.
+- **Parâmetros:**
+  - `title`: Título do post. 
+  - `content`: Conteúdo do post.
+- **Headers:**
+   - `Authorization`: Bearer <Token>.
+- **Resposta:**
+  ```json
+  {
+			
+		
+		"title": <"Título do post">,
+		"content": <"Conteúdo do post">,
+		"user_id": <Id do usuário>,
+		"created_at": <"Data/hora da criação">,
+		"updated_at": <"Data/hora da alteração">
+        "id": <Id do post>
+
+  }
+  ```
 
 </details>
 
