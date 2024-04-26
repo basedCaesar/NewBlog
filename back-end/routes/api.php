@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BlogPostController;
+use App\Http\Controllers\CommentController;
 use App\Http\Controllers\UserController;
 
 
@@ -36,7 +37,7 @@ Route::prefix('posts')->group(function () {
     Route::get('/{post}', [BlogPostController::class, 'show']);
 
     // Rota para recuperar os comentários de um post específico
-    Route::get('/{post}/comments', [BlogPostController::class, 'getAllComments']);
+    Route::get('/{post}/comments', [CommentController::class, 'getAllComments']);
 
     // Grupo de rotas que requerem autenticação
     Route::middleware(['auth:sanctum'])->group(function () {
@@ -44,7 +45,7 @@ Route::prefix('posts')->group(function () {
         Route::resource('', BlogPostController::class)->except(['index', 'show'])->parameters(['' => 'post']);
 
         // Rota para adicionar um comentário
-        Route::post('/{post}/comments', [BlogPostController::class, 'addComment']);
+        Route::post('/{post}/comments', [CommentController::class, 'addComment']);
     });
 });
 
