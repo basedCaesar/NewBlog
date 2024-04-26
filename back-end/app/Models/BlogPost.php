@@ -4,6 +4,8 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Builder;
+
 
 use App\Models\User;
 use App\Models\Comment;
@@ -27,5 +29,10 @@ class BlogPost extends Model
     public function comments()
     {
         return $this->hasMany(Comment::class);
+    }
+
+    public function scopeOfUser(Builder $query, $userId)
+    {
+        return $query->where('user_id', $userId);
     }
 }

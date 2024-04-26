@@ -81,10 +81,12 @@ class BlogPostController extends Controller
         // Obtém o usuário autenticado
         $user = Auth::user();
 
-        // Encontra o post pelo ID e pelo usuário autenticado
-        $blogPost = BlogPost::where('id', $id)
-            ->where('user_id', $user->id)
-            ->firstOrFail();
+        // // Encontra o post pelo ID e pelo usuário autenticado
+        // $blogPost = BlogPost::where('id', $id)
+        //     ->where('user_id', $user->id)
+        //     ->firstOrFail();
+
+        $blogPost = BlogPost::ofUser($user->id)->findOrFail($id);
 
         // Atualiza os dados do post
         $blogPost->title = $request->input('title');
@@ -106,10 +108,13 @@ class BlogPostController extends Controller
         // Obtém o usuário autenticado
         $user = Auth::user();
 
-        // Encontra o post pelo ID e pelo usuário autenticado
-        $blogPost = BlogPost::where('id', $id)
-            ->where('user_id', $user->id)
-            ->firstOrFail();
+        // // Encontra o post pelo ID e pelo usuário autenticado
+        // $blogPost = BlogPost::where('id', $id)
+        //     ->where('user_id', $user->id)
+        //     ->firstOrFail();
+
+        // Encontra o post pelo ID e pelo usuário autenticado usando o scope definido
+        $blogPost = BlogPost::ofUser($user->id)->findOrFail($id);
 
         // Deleta o post
         $blogPost->delete();
