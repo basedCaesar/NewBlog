@@ -1,128 +1,48 @@
 <?php
-
 namespace App\Http\Controllers;
 
+use App\Interfaces\BlogPostServiceInterface;
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
-use App\Models\BlogPost;
+use App\Http\Requests\StoreBlogPostRequest;
+use App\Http\Requests\UpdateBlogPostRequest;
 use Illuminate\Support\Facades\Auth;
 
 class BlogPostController extends Controller
 {
-    /**
-     * Lista todos os posts.
-     *
-     * @return \Illuminate\Http\Response
-     */
+    protected $blogPostService;
+
+    public function __construct(BlogPostServiceInterface $blogPostService)
+    {
+        $this->blogPostService = $blogPostService;
+    }
 
     public function index()
     {
-        // Retorna todos os posts
-        $blogPosts = BlogPost::all();
+        $blogPosts = $this->blogPostService->getAllPosts();
         return response()->json($blogPosts);
     }
 
-    /**
-     * Armazena um novo post no banco de dados.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
+    public function store(StoreBlogPostRequest $request)
     {
-        // Valida os dados recebidos
-        $request->validate([
-            'title' => 'required|string',
-            'content' => 'required|string',
-        ]);
-
-        // Obtém o usuário autenticado
-        $user = Auth::user();
-
-        // Cria um novo post
-        $blogPost = new BlogPost();
-        $blogPost->title = $request->input('title');
-        $blogPost->content = $request->input('content');
-        $blogPost->user_id = $user->id; // Associa ao usuário autenticado
-        $blogPost->save();
-
-        // Retorna o post criado com o código de status 201 (Created)
+        $blogPost = $this->blogPostService->createPost($request->validated(), Auth::id());
         return response()->json($blogPost, 201);
     }
 
-    /**
-     * Recupera um post específico.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function show($id)
     {
-        // Encontra o post pelo ID
-        $blogPost = BlogPost::findOrFail($id);
+        $blogPost = $this->blogPostService->getPostById($id);
         return response()->json($blogPost);
     }
 
-    /**
-     * Atualiza o post especificado no banco de dados.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, $id)
+    public function update(UpdateBlogPostRequest $request, $id)
     {
-        // Valida os dados recebidos
-        $request->validate([
-            'title' => 'required|string',
-            'content' => 'required|string',
-        ]);
-
-        // Obtém o usuário autenticado
-        $user = Auth::user();
-
-        // // Encontra o post pelo ID e pelo usuário autenticado
-        // $blogPost = BlogPost::where('id', $id)
-        //     ->where('user_id', $user->id)
-        //     ->firstOrFail();
-
-        $blogPost = BlogPost::ofUser($user->id)->findOrFail($id);
-
-        // Atualiza os dados do post
-        $blogPost->title = $request->input('title');
-        $blogPost->content = $request->input('content');
-        $blogPost->save();
-
-        // Retorna o post atualizado
+        $blogPost = $this->blogPostService->updatePost($id, $request->validated(), Auth::id());
         return response()->json($blogPost, 200);
     }
 
-    /**
-     * Remove o post especificado do banco de dados.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function destroy($id)
     {
-        // Obtém o usuário autenticado
-        $user = Auth::user();
-
-        // // Encontra o post pelo ID e pelo usuário autenticado
-        // $blogPost = BlogPost::where('id', $id)
-        //     ->where('user_id', $user->id)
-        //     ->firstOrFail();
-
-        // Encontra o post pelo ID e pelo usuário autenticado usando o scope definido
-        $blogPost = BlogPost::ofUser($user->id)->findOrFail($id);
-
-        // Deleta o post
-        $blogPost->delete();
-        
-        // Retorna uma resposta de sucesso com o código de status 204 (No Content)
+        $this->blogPostService->deletePost($id, Auth::id());
         return response()->json(null, 204);
     }
-
-    
-
 }
