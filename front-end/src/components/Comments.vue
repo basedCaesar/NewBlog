@@ -58,7 +58,7 @@ const showLoginModal = ref(false);
 const fetchComments = async (postId) => {
   try {
     const response = await axios.get(`http://127.0.0.1:8000/api/posts/${postId}/comments`);
-    existingComments.value = response.data;
+    existingComments.value = response.data.data;
 
     // Buscar dados do usuário para cada comentário
     await Promise.all(existingComments.value.map(async (comment) => {

@@ -14,6 +14,7 @@ class AppServiceProvider extends ServiceProvider
     {
         $this->app->bind(BlogPostServiceInterface::class, BlogPostService::class);
         $this->app->bind(UserServiceInterface::class, UserService::class);
+        $this->app->bind(CommentServiceInterface::class, CommentService::class);
     }
 
     /**
