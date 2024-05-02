@@ -13,6 +13,7 @@ class AppServiceProvider extends ServiceProvider
     public function register(): void
     {
         $this->app->bind(BlogPostServiceInterface::class, BlogPostService::class);
+        $this->app->bind(UserServiceInterface::class, UserService::class);
     }
 
     /**

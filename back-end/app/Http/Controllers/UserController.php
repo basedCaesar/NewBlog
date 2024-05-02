@@ -3,90 +3,63 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Http\Requests\UpdateUserProfileRequest;
+use App\Services\UserService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Validation\Rule;
 
 class UserController extends Controller
 {
+    protected $userService;
 
-    /**
-     * Exibe o perfil de um usuário.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
+    public function __construct(UserService $userService)
+    {
+        $this->userService = $userService;
+    }
+
     public function show($id)
     {
-        // Encontra o usuário pelo ID
-        $user = User::findOrFail($id);
-
-        // Carrega os posts do usuário
-        $user->load('posts');
-        
-        // Retorna as informações do usuário
-        return $user;
+        $user = $this->userService->loadUserProfile($id);
+        return response()->json($user);
     }
 
-    /**
-     * Atualiza o perfil do usuário autenticado.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request)
+    public function update(UpdateUserProfileRequest $request)
     {
-        // Obtenha o usuário autenticado
-        $user = $request->user();
-
-        // Validação dos dados
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => [
-                'required',
-                'string',
-                'email',
-                'max:255',
-                Rule::unique('users')->ignore($user->id),
-            ],
-        ]);
-
-        // Atualiza os dados do usuário
-        $user->name = $request->name;
-        $user->email = $request->email;
-    
-        $user->save();
-
-        // Retorna resposta de êxito
-        return response()->json(['message' => 'Perfil atualizado com sucesso']);
+        $response = $this->userService->updateUserProfile($request->user()->id, $request->validated());
+        return response()->json($response);
     }
 
-   /**
-     * Exclui a conta do usuário autenticado.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function destroy($id)
-    {
-        // Obtém o usuário autenticado
-        $authenticatedUser = Auth::user();
+{
+    try {
+        $user = User::findOrFail($id);
+        $this->authorize('delete', $user);
 
-        // Verifica se o ID do usuário autenticado corresponde ao ID fornecido
-        if ($authenticatedUser->id != $id) {
-            return response()->json(['error' => 'Não autorizado'], 403);
+        $response = $this->userService->deleteUserAccount($id);
+
+        // Only include debug information if app is in debug mode
+        if (config('app.debug')) {
+            $response['debug'] = [
+                'Authenticated user ID' => Auth::id(),
+                'User to delete ID' => $id
+            ];
         }
 
-        // Encontra o usuário pelo ID
-        $user = User::findOrFail($id);
-        
-        // Revoga todos os tokens associados ao usuário
-        $user->tokens()->delete();
-        
-        // Exclui a conta do usuário
-        $user->delete();
+        return response()->json($response);
+    } catch (\Exception $e) {
+        // Include debug information in the error response if app is in debug mode
+        $debugInfo = config('app.debug') ? [
+            'Authenticated user ID' => Auth::id(),
+            'User to delete ID' => $id,
+            'Error message' => $e->getMessage()
+        ] : null;
 
-        // Retorna mensagem de sucesso
-        return response()->json(['message' => 'Conta excluída com sucesso']);
+        return response()->json([
+            'error' => 'This action is unauthorized.',
+            'debug' => $debugInfo
+        ], 403);
     }
+}
+
+
 }
