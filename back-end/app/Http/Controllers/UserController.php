@@ -36,16 +36,8 @@ class UserController extends Controller
         $this->authorize('delete', $user);
 
         $response = $this->userService->deleteUserAccount($id);
-
-        // Only include debug information if app is in debug mode
-        if (config('app.debug')) {
-            $response['debug'] = [
-                'Authenticated user ID' => Auth::id(),
-                'User to delete ID' => $id
-            ];
-        }
-
         return response()->json($response);
+        
     } catch (\Exception $e) {
         // Include debug information in the error response if app is in debug mode
         $debugInfo = config('app.debug') ? [
