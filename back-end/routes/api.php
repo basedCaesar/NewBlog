@@ -1,6 +1,5 @@
 <?php
 
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BlogPostController;
@@ -33,11 +32,11 @@ Route::prefix('user')->group(function () {
 
 Route::prefix('posts')->group(function () {
     // Rotas para recuperar um post ou todos os posts, sem requerer autentiação
-    Route::get('/', [BlogPostController::class, 'index']);
-    Route::get('/{post}', [BlogPostController::class, 'show']);
+    Route::get('/', [BlogPostController::class, 'index'])->name('posts.index');
+    Route::get('/{post}', [BlogPostController::class, 'show'])->name('posts.show');
 
     // Rota para recuperar os comentários de um post específico
-    Route::get('/{post}/comments', [CommentController::class, 'getAllComments']);
+    Route::get('/{post}/comments', [CommentController::class, 'getAllComments'])->name('posts.comments.index');
 
     // Grupo de rotas que requerem autenticação
     Route::middleware(['auth:sanctum'])->group(function () {
@@ -45,7 +44,7 @@ Route::prefix('posts')->group(function () {
         Route::resource('', BlogPostController::class)->except(['index', 'show'])->parameters(['' => 'post']);
 
         // Rota para adicionar um comentário
-        Route::post('/{post}/comments', [CommentController::class, 'addComment']);
+        Route::post('/{post}/comments', [CommentController::class, 'addComment'])->name('posts.comments.store');;
     });
 });
 
