@@ -5,7 +5,7 @@ services:
     build: ./back-end
     container_name: laravel_backend
     ports:
-      - "8000:80"
+      - "8000:8000"
     volumes:
       - ./back-end:/var/www/html
     depends_on:
@@ -15,7 +15,7 @@ services:
     build: ./front-end
     container_name: vue_frontend
     ports:
-      - "8080:8080"
+      - "80:80"
     volumes:
       - ./front-end:/app
     stdin_open: true

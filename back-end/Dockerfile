@@ -34,4 +34,4 @@ RUN COMPOSER_ALLOW_SUPERUSER=1 composer dump-autoload --optimize
 RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
 
 # Expose port 80
-EXPOSE 80
+EXPOSE 8000
