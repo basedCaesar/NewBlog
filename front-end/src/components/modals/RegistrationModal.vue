@@ -44,7 +44,7 @@
 
 <script setup>
 import { ref } from 'vue';
-import axios from 'axios';
+import axiosInstance from '../../utils/axiosInstance';
 import eventBus from '../../utils/EventBus';
 
 // Definição das referências reativas para nome, email e senha
@@ -53,7 +53,7 @@ const email = ref('');
 const password = ref('');
 
 // Definição do evento emitido pelo modal
-const emit = defineEmits(['close','registered'])
+const emit = defineEmits(['close', 'registered']);
 
 // Função para fechar o modal
 const close = () => {
@@ -68,27 +68,32 @@ const registered = () => {
 // Função para submeter o formulário de registro
 const submitForm = async () => {
   try {
+    // Fetch the CSRF cookie
+    await axiosInstance.get('/sanctum/csrf-cookie');
+
     // Realizando a requisição POST para registrar o usuário
-    const response = await axios.post('http://127.0.0.1:8000/api/auth/register', {
+    const response = await axiosInstance.post('/auth/register', {
       name: name.value,
       email: email.value,
       password: password.value
     });
+
     console.log('User registered:', response.data);
+
     // Armazenando o token de acesso e o ID do usuário no armazenamento local
     localStorage.setItem('accessToken', response.data.token);
     localStorage.setItem('userId', response.data.user.id);
+
     registered(); // Emitindo o evento 'registered'
     eventBus.emit('registered'); // Emitindo evento 'registered' via EventBus
     close(); // Fechando o modal após o registro
 
-    
   } catch (error) {
     console.error('Error registering user:', error);
-    
   }
 };
 </script>
+
 
 <style scoped>
 /* Definindo a transição para o modal */

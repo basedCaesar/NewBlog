@@ -41,7 +41,7 @@
 
 <script setup>
 import { defineProps, ref } from 'vue';
-import axios from 'axios';
+import axiosInstance from '../../utils/axiosInstance';
 
 // Definindo os eventos emitidos pelo modal
 const emit = defineEmits(['close', 'altered']);
@@ -83,28 +83,33 @@ const submitForm = async () => {
       return;
     }
 
+    // Fetch the CSRF cookie
+    await axiosInstance.get('/sanctum/csrf-cookie');
+
     // Obtendo o ID do usuário do armazenamento local
     const userId = localStorage.getItem('userId');
+    // Obter o token do armazenamento local
+    const token = localStorage.getItem('accessToken');
+
     // Enviando requisição PUT para atualizar as informações do usuário
-    await axios.put(`http://127.0.0.1:8000/api/user/profile/${userId}`, {
+    await axiosInstance.put(`/user/profile/${userId}`, {
       name: name.value,
       email: email.value
     }, {
       headers: {
-        Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
+        Authorization: `Bearer ${token}`,
       },
     });
 
     altered(); // Emitindo evento 'altered'
     close(); // Fechando o modal após a alteração
 
-    
   } catch (error) {
     console.error('Error updating user profile:', error);
-    
   }
 };
 </script>
+
 
 <style scoped>
 /* Definindo a transição para o modal */

@@ -40,9 +40,8 @@
 </template>
 
 <script setup>
-// Importando funções relevantes
 import { defineProps, ref } from 'vue';
-import axios from 'axios';
+import axiosInstance from '../../utils/axiosInstance';
 
 // Definindo os eventos emitidos pelo modal
 const emit = defineEmits(['close', 'altered']);
@@ -80,26 +79,32 @@ const submitForm = async () => {
       return; // Se não foram alterados, não enviar a requisição
     }
 
+    // Fetch the CSRF cookie
+    await axiosInstance.get('/sanctum/csrf-cookie');
+
+    // Obter o token do armazenamento local
+    const token = localStorage.getItem('accessToken');
+
     // Enviando requisição PUT para atualizar o post
-    await axios.put(`http://127.0.0.1:8000/api/posts/${postIdFromParent.value}`, {
+    await axiosInstance.put(`/posts/${postIdFromParent.value}`, {
       title: title.value,
       content: content.value
     }, {
       headers: {
-        Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
+        Authorization: `Bearer ${token}`,
       },
     });
 
     altered(); // Emitindo evento 'altered'
     close(); // Fechando o modal após a alteração
 
-    
   } catch (error) {
     console.error('Error updating post:', error);
-    
   }
 };
 </script>
+
+
 
 <style scoped>
 /* Estilização da transição do modal */

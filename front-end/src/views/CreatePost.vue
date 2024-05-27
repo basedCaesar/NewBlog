@@ -26,7 +26,7 @@
 
 <script setup>
 import { ref } from 'vue';
-import axios from 'axios';
+import axiosInstance from '../utils/axiosInstance.js';
 import { useRouter } from 'vue-router';
 
 // Variáveis reativas para armazenar os dados do post
@@ -39,11 +39,14 @@ const router = useRouter();
 // Método para criar uma nova postagem no blog
 const createPost = async () => {
   try {
+    // Fetch the CSRF cookie
+    await axiosInstance.get('/sanctum/csrf-cookie');
+
     // Obter o token do armazenamento local
     const token = localStorage.getItem('accessToken');
 
     // Fazer uma requisição para criar o post com cabeçalho de autorização
-    const response = await axios.post('http://127.0.0.1:8000/api/posts', {
+    const response = await axiosInstance.post('/posts', {
       title: postTitle.value,
       content: postContent.value
     }, {
@@ -59,5 +62,4 @@ const createPost = async () => {
     // Lidar com o erro
   }
 };
-
 </script>

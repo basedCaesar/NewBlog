@@ -19,7 +19,7 @@
 
 <script setup>
 import { ref, watchEffect } from 'vue';
-import axios from 'axios';
+import axiosInstance from '../utils/axiosInstance.js';
 import UserPostList from '../components/UserPostList.vue';
 
 // Define dados reativos
@@ -28,18 +28,22 @@ const isLoading = ref(true); // Variável para indicar se os posts estão sendo 
 
 // Função para buscar os posts
 const fetchPosts = async () => {
-try {
-  const response = await axios.get('http://127.0.0.1:8000/api/posts');
-  posts.value = response.data; // Atualiza a lista de posts com os dados obtidos da API
-} catch (error) {
-  console.error('Erro ao buscar as postagens:', error);
-} finally {
-  isLoading.value = false; // Define isLoading como false quando a busca estiver concluída
-}
+  try {
+    // // Fetch the CSRF cookie
+    // await axiosInstance.get('/sanctum/csrf-cookie');
+    
+    const response = await axiosInstance.get('/posts');
+    posts.value = response.data; // Atualiza a lista de posts com os dados obtidos da API
+  } catch (error) {
+    console.error('Erro ao buscar as postagens:', error);
+  } finally {
+    isLoading.value = false; // Define isLoading como false quando a busca estiver concluída
+  }
 };
 
 // Buscar os posts quando o componente for montado
 watchEffect(() => {
-fetchPosts();
+  fetchPosts();
 });
 </script>
+

@@ -49,93 +49,93 @@
 </template>
 
   
-  <script setup>
+<script setup>
+import { defineProps, onBeforeMount, ref } from 'vue';
+import { useRouter } from 'vue-router';
+import { checkAuthentication } from '../utils/auth';
+import { checkOwnership } from '../utils/CheckOwnership.js';
+import alterPostModal from './modals/AlterPostModal.vue';
+import axiosInstance from '../utils/axiosInstance.js';
 
-  //Importando funções e componentes relevantes
-  import { defineProps, onBeforeMount, ref } from 'vue';
-  import { useRouter } from 'vue-router';
-  import { checkAuthentication } from '../utils/auth';
-  import { checkOwnership } from '../utils/CheckOwnership.js';
-  import alterPostModal from './modals/AlterPostModal.vue';
-  import axios from 'axios';
-  
-  //Declarando constantes reativas para controle de estilos e funções
-  const isLoggedIn = ref(null);
-  const isOwnProfile = ref(checkOwnership());
-  const showAlterPostModal = ref(false);
-  const modalPostId = ref('');
-  const modalPostTitle = ref('');
-  const modalPostContent = ref('');
-  
-  //Declarando router
-  const router = useRouter();
+// Declarando constantes reativas para controle de estilos e funções
+const isLoggedIn = ref(null);
+const isOwnProfile = ref(checkOwnership());
+const showAlterPostModal = ref(false);
+const modalPostId = ref('');
+const modalPostTitle = ref('');
+const modalPostContent = ref('');
 
-  // Definindo props que serão recebidos do componente pai
-  const props = defineProps({
-    posts: {
-      type: Array,
-      required: true
-    },
-    isOwnProfile: {
-      type: Boolean,
-      required: true
-    }
-  });
-  
-  // Usando a hook onBeforeMount para mudar o valor de isLoggedIn antes de montar o componente
-  onBeforeMount(() => {
-    // Chamando checkAuthentication() para determinar o status de autenticação
-    isLoggedIn.value = checkAuthentication();
-  });
+// Declarando router
+const router = useRouter();
 
-  // Função para navegar para a rota PostDetail
-  const navigateToPost = (postId) => {
-    router.push(`/posts/${postId}`);
-  };
+// Definindo props que serão recebidos do componente pai
+const props = defineProps({
+  posts: {
+    type: Array,
+    required: true
+  },
+  isOwnProfile: {
+    type: Boolean,
+    required: true
+  }
+});
 
-  // Função para navegar para a rota CreatePost
-  const navigateToNewPost = () => {
-    router.push('/posts/create'); 
-  };
- 
-  // Função para dar reload na página, quando um post é deletado ou alterado
-  const reloadPage = () => {
-    router.go();
-  };
+// Usando a hook onBeforeMount para mudar o valor de isLoggedIn antes de montar o componente
+onBeforeMount(() => {
+  // Chamando checkAuthentication() para determinar o status de autenticação
+  isLoggedIn.value = checkAuthentication();
+});
 
-  // Função para deletar um post
-  const deletePost = async (postId) => {
-    try {
-      // Pega o token do local storage
-      const token = localStorage.getItem('accessToken');
+// Função para navegar para a rota PostDetail
+const navigateToPost = (postId) => {
+  router.push(`/posts/${postId}`);
+};
 
-      // Faz a request de deleção passando o header 'authorization' 
-      await axios.delete(`http://127.0.0.1:8000/api/posts/${postId}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+// Função para navegar para a rota CreatePost
+const navigateToNewPost = () => {
+  router.push('/posts/create'); 
+};
 
-      // Chama função para dar reload na página
-      reloadPage();
-      
-    } catch (error) {
-      console.error('Erro ao deletar post:', error);
+// Função para dar reload na página, quando um post é deletado ou alterado
+const reloadPage = () => {
+  router.go();
+};
+
+// Função para deletar um post
+const deletePost = async (postId) => {
+  try {
+    // Fetch the CSRF cookie
+    await axiosInstance.get('/sanctum/csrf-cookie');
+
+    // Pega o token do local storage
+    const token = localStorage.getItem('accessToken');
+
+    // Faz a request de deleção passando o header 'authorization' 
+    await axiosInstance.delete(`/posts/${postId}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    // Chama função para dar reload na página
+    reloadPage();
     
-    }
-  };
+  } catch (error) {
+    console.error('Erro ao deletar post:', error);
+  }
+};
 
-  // Função para abrir o modal de alteração e passar os valores necessários para as props 
-  const handleAlterPost = (postId, postTitle, postContent) => {
-    modalPostId.value = postId;
-    modalPostTitle.value = postTitle;
-    modalPostContent.value = postContent;
-    showAlterPostModal.value = true;
-  };
+// Função para abrir o modal de alteração e passar os valores necessários para as props 
+const handleAlterPost = (postId, postTitle, postContent) => {
+  modalPostId.value = postId;
+  modalPostTitle.value = postTitle;
+  modalPostContent.value = postContent;
+  showAlterPostModal.value = true;
+};
 
-  // Função para fechar o modal de alteração
-  const closeAlterPostModal = () => {
-    showAlterPostModal.value = false;
-  };
-  </script>
-  
+// Função para fechar o modal de alteração
+const closeAlterPostModal = () => {
+  showAlterPostModal.value = false;
+};
+</script>
+

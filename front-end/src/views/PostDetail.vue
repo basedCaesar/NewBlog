@@ -18,7 +18,7 @@
 
 <script setup>
 import { ref, onBeforeMount } from 'vue';
-import axios from 'axios';
+import axiosInstance from '../utils/axiosInstance.js';
 import { useRoute } from 'vue-router';
 import Comments from '@/components/Comments.vue';
 import PostContent from '@/components/PostContent.vue';
@@ -32,14 +32,20 @@ const route = useRoute();
 onBeforeMount(async () => {
   try {
     const postId = route.params.postId; // Obtém o ID do post da rota
-    const response = await axios.get(`http://127.0.0.1:8000/api/posts/${postId}`); // Busca os dados do post na API
+    
+    // Fetch the CSRF cookie
+    await axiosInstance.get('/sanctum/csrf-cookie');
+    
+    const response = await axiosInstance.get(`/posts/${postId}`); // Busca os dados do post na API
     post.value = response.data; // Atualiza os dados do post
+
     // Busca os dados do usuário com base no ID do usuário associado ao post
     const userId = post.value.user_id; // Obtém o ID do usuário associado ao post
-    const userResponse = await axios.get(`http://127.0.0.1:8000/api/user/${userId}`); // Busca os dados do usuário na API
+    const userResponse = await axiosInstance.get(`/user/${userId}`); // Busca os dados do usuário na API
     user.value = userResponse.data; // Atualiza os dados do usuário
   } catch (error) {
     console.error('Erro ao buscar os dados da postagem:', error);
   }
 });
 </script>
+

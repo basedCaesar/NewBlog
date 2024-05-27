@@ -39,7 +39,7 @@
 import { ref } from 'vue';
 import RegistrationModal from './modals/RegistrationModal.vue';
 import LoginModal from './modals/LoginModal.vue';
-import axios from 'axios';
+import axiosInstance from '../utils/axiosInstance';
 import { checkAuthentication } from '../utils/auth.js';
 import eventBus from '../utils/EventBus.js';
 
@@ -61,8 +61,11 @@ const login = () => {
 // Método para lidar com o logout
 const logout = async () => {
   try {
+    // Fetch the CSRF cookie
+    await axiosInstance.get('/sanctum/csrf-cookie');
+
     // Fazer uma solicitação para o endpoint de logout com o token de autorização
-    await axios.post('http://127.0.0.1:8000/api/auth/logout', null, {
+    await axiosInstance.post('/auth/logout', null, {
       headers: {
         Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
       },
@@ -86,7 +89,6 @@ const logout = async () => {
 
 // Método para lidar com o registro
 const register = () => {
-
   showRegistrationModal.value = true;
 };
 
@@ -97,7 +99,7 @@ const handleLoggedIn = () => {
 };
 
 // Método para lidar com o registro
-const handleRegistered = ()=> {
+const handleRegistered = () => {
   isLoggedIn.value = checkAuthentication();
   userId.value = localStorage.getItem('userId'); // Atualizar userId do localStorage
 };
@@ -108,4 +110,3 @@ eventBus.on('userDeleted', () => {
   isLoggedIn.value = checkAuthentication();
 });
 </script>
-

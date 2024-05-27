@@ -25,7 +25,7 @@
 
 <script setup>
 import { defineProps, ref } from 'vue';
-import axios from 'axios';
+import axiosInstance from '../utils/axiosInstance.js';
 import eventBus from '../utils/EventBus.js'; 
 import { checkOwnership } from '../utils/CheckOwnership'; 
 import EditUserModal from './modals/EditUserModal.vue';
@@ -47,11 +47,14 @@ const isOwnProfile = ref(checkOwnership());
 // Método para excluir a conta do usuário
 const deleteAccount = async () => {
   try {
+    // Fetch the CSRF cookie
+    await axiosInstance.get('/sanctum/csrf-cookie');
+
     // Obter o token do armazenamento local
     const token = localStorage.getItem('accessToken');
 
     // Fazer uma solicitação para excluir a conta com o cabeçalho de autorização
-    await axios.delete(`http://127.0.0.1:8000/api/user/profile/${props.user.id}`, {
+    await axiosInstance.delete(`/user/profile/${props.user.id}`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -88,7 +91,7 @@ eventBus.on('logout', () => {
 const reloadUserInfo = async () => {
   // Buscar os dados atualizados do usuário e atualizar os props
   try {
-    const response = await axios.get(`http://127.0.0.1:8000/api/user/${props.user.id}`);
+    const response = await axiosInstance.get(`/user/${props.user.id}`);
     props.user = response.data; // Supondo que a resposta contenha o objeto de usuário atualizado
     window.location.reload(); // Recarregar a página
   } catch (error) {
@@ -97,6 +100,7 @@ const reloadUserInfo = async () => {
 };
 
 </script>
+
 
 
 <style scoped>

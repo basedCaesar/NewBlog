@@ -39,7 +39,7 @@
 
 <script setup>
 import { ref } from 'vue';
-import axios from 'axios';
+import axiosInstance from '../../utils/axiosInstance';
 import eventBus from '../../utils/EventBus';
 
 // Definição das referências reativas para email e senha
@@ -47,7 +47,7 @@ const email = ref('');
 const password = ref('');
 
 // Definição do evento emitido pelo modal
-const emit = defineEmits(['close','logged'])
+const emit = defineEmits(['close', 'logged']);
 
 // Função para fechar o modal
 const close = () => {
@@ -62,26 +62,32 @@ const logged = () => {
 // Função para submeter o formulário de login
 const submitForm = async () => {
   try {
+    // Fetch the CSRF cookie
+    await axiosInstance.get('/sanctum/csrf-cookie');
+
     // Realizando a requisição POST para fazer login
-    const response = await axios.post('http://127.0.0.1:8000/api/auth/login', {
+    const response = await axiosInstance.post('/auth/login', {
       email: email.value,
       password: password.value
     });
+
     console.log('User logged:', response.data);
+
     // Armazenando o token de acesso e o ID do usuário no armazenamento local
     localStorage.setItem('accessToken', response.data.token);
     localStorage.setItem('userId', response.data.user.id);
+
     logged(); // Emitindo o evento 'logged'
     eventBus.emit('login'); // Emitindo evento 'login' via EventBus
     close(); // Fechando o modal após o login
 
-    
   } catch (error) {
-    console.error('Error registering user:', error);
-    
+    console.error('Error logging in user:', error);
   }
 };
 </script>
+
+
 
 <style scoped>
 /* Definindo a transição para o modal */

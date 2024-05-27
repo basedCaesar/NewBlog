@@ -1,3 +1,51 @@
+# version: '3.8'
+
+# services:
+#   backend:
+#     build: ./back-end
+#     container_name: laravel_backend
+#     ports:
+#       - "8000:8000"
+#     volumes:
+#       - ./back-end:/var/www/html
+#     networks:
+#       - mynetwork
+#     depends_on:
+#       - db
+
+#   frontend:
+#     build: ./front-end
+#     container_name: vue_frontend
+#     ports:
+#       - "8080:80"  # Changed port to 8080 to avoid conflict with common port 80 usage
+#     volumes:
+#       - ./front-end:/app
+#     networks:
+#       - mynetwork
+#     stdin_open: true
+#     tty: true
+
+#   db:
+#     image: mysql:5.7
+#     container_name: mysql_db
+#     environment:
+#       MYSQL_DATABASE: blogdb
+#       MYSQL_ROOT_PASSWORD: root
+#     ports:
+#       - "3307:3306"
+#     volumes:
+#       - db_data:/var/lib/mysql
+#     networks:
+#       - mynetwork
+
+# networks:
+#   mynetwork:
+
+# volumes:
+#   db_data:
+#     driver: bridge
+
+
 version: '3.8'
 
 services:
@@ -5,9 +53,11 @@ services:
     build: ./back-end
     container_name: laravel_backend
     ports:
-      - "8000:8000"
+      - "8000:80"  # Ensure Laravel is configured to use port 8000
     volumes:
       - ./back-end:/var/www/html
+    networks:
+      - mynetwork
     depends_on:
       - db
 
@@ -15,9 +65,11 @@ services:
     build: ./front-end
     container_name: vue_frontend
     ports:
-      - "80:80"
+      - "8080:80"  # Map host port 8080 to container port 80
     volumes:
       - ./front-end:/app
+    networks:
+      - mynetwork
     stdin_open: true
     tty: true
 
@@ -28,9 +80,14 @@ services:
       MYSQL_DATABASE: blogdb
       MYSQL_ROOT_PASSWORD: root
     ports:
-      - "3307:3306"
+      - "3307:3306"  # Map host port 3307 to container port 3306
     volumes:
       - db_data:/var/lib/mysql
+    networks:
+      - mynetwork
+
+networks:
+  mynetwork:
 
 volumes:
   db_data:

@@ -35,11 +35,11 @@
 
 <script setup>
 import { ref, onBeforeMount } from 'vue';
-import axios from 'axios';
+import axiosInstance from '../utils/axiosInstance.js';
 import { checkAuthentication } from '../utils/auth.js';
 import eventBus from '../utils/EventBus.js';
 import { formatDateTime } from '../utils/DateTimeFormatter.js'; 
-import LoginModal from './modals/LoginModal.vue'
+import LoginModal from './modals/LoginModal.vue';
 
 // Define props para receber a lista de comentários e o status de autenticação
 const props = defineProps({
@@ -57,13 +57,13 @@ const showLoginModal = ref(false);
 // Função para buscar os comentários existentes
 const fetchComments = async (postId) => {
   try {
-    const response = await axios.get(`http://127.0.0.1:8000/api/posts/${postId}/comments`);
+    const response = await axiosInstance.get(`/posts/${postId}/comments`);
     existingComments.value = response.data.data;
 
     // Buscar dados do usuário para cada comentário
     await Promise.all(existingComments.value.map(async (comment) => {
       try {
-        const userResponse = await axios.get(`http://127.0.0.1:8000/api/user/${comment.user_id}`);
+        const userResponse = await axiosInstance.get(`/user/${comment.user_id}`);
         comment.user = userResponse.data;
       } catch (error) {
         console.error(`Error fetching user for comment with ID ${comment.id}:`, error);
@@ -88,6 +88,9 @@ async function addComment() {
   }
 
   try {
+    // Fetch the CSRF cookie
+    await axiosInstance.get('/sanctum/csrf-cookie');
+
     // Obter o token de autenticação do armazenamento local
     const accessToken = localStorage.getItem('accessToken');
 
@@ -99,8 +102,8 @@ async function addComment() {
     };
 
     // Enviar a solicitação POST com o cabeçalho de autenticação
-    const response = await axios.post(
-      `http://127.0.0.1:8000/api/posts/${props.postId}/comments`,
+    const response = await axiosInstance.post(
+      `/posts/${props.postId}/comments`,
       {
         content: newComment.value
       },
@@ -116,7 +119,6 @@ async function addComment() {
     newComment.value = '';
   } catch (error) {
     console.error('Error adding comment:', error);
-    
   }
 }
 
@@ -145,8 +147,10 @@ eventBus.on('logout', () => {
 
 // Realizar autenticação quando o evento 'registered' é emitido
 eventBus.on('registered', () => {
-  // Atualizar a variável isLoggedIn para false
+  // Atualizar a variável isLoggedIn para true
   isLoggedIn.value = checkAuthentication();
 });
 
 </script>
+
+

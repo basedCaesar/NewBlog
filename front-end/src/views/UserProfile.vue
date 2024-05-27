@@ -15,7 +15,7 @@
 
 <script setup>
 import { ref, watchEffect } from 'vue';
-import axios from 'axios';
+import axiosInstance from '../utils/axiosInstance.js';
 import { useRoute } from 'vue-router';
 import UserPostList from '../components/UserPostList.vue';
 import UserInfo from '../components/UserInfo.vue';
@@ -27,11 +27,13 @@ const route = useRoute();
 // Função para buscar o perfil do usuário
 const fetchUserProfile = async (userId) => {
   try {
-    const response = await axios.get(`http://127.0.0.1:8000/api/user/${userId}`);
+    // Fetch the CSRF cookie
+    await axiosInstance.get('/sanctum/csrf-cookie');
+
+    const response = await axiosInstance.get(`/user/${userId}`);
     user.value = response.data;
   } catch (error) {
     console.error('Erro ao buscar os dados do usuário:', error);
-    
   }
 };
 
@@ -43,6 +45,7 @@ watchEffect(async () => {
   }
 });
 </script>
+
 
 <style scoped>
 .profile-container {
